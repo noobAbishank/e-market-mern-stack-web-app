@@ -1,0 +1,210 @@
+import React, { Fragment, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { Typography } from "@material-ui/core";
+import { useAlert } from "react-alert";
+import AccountTreeIcon from "@material-ui/icons/AccountTree";
+import { Button } from "@material-ui/core";
+
+import "./ProcessOrder.css";
+import "./NewProduct.css";
+import MetaData from "../layout/MetaData";
+import SideBar from "./SideBar";
+import Loader from "../layout/Loader/Loader";
+import {
+  clearErrors,
+  getOrderDetails,
+  updateOrder,
+} from "../../actions/orderAction";
+import { UPDATE_ORDER_RESET } from "../../constants/orderConstants";
+
+const ProcessOrder = ({ history, match }) => {
+  const alert = useAlert();
+  const dispatch = useDispatch();
+
+  const { order, error, loading } = useSelector((state) => state.orderDetails);
+  const { error: updateError, isUpdated } = useSelector((state) => state.order);
+
+  const [status, setStatus] = useState("");
+
+  useEffect(() => {
+    if (error) {
+      alert.error(error);
+
+      dispatch(clearErrors());
+    }
+
+    if (updateError) {
+      alert.error(updateError);
+
+      dispatch(clearErrors());
+    }
+
+    if (isUpdated) {
+      alert.success("Order Status Updated Successfully");
+      history.push("/admin/orders");
+      dispatch({ type: UPDATE_ORDER_RESET });
+    }
+
+    dispatch(getOrderDetails(match.params.id));
+  }, [
+    dispatch,
+    alert,
+    error,
+    match.params.id,
+    updateError,
+    history,
+    isUpdated,
+  ]);
+
+  const processOrderSubmintHandler = (e) => {
+    e.preventDefault();
+
+    const myForm = new FormData();
+
+    myForm.set("status", status);
+
+    dispatch(updateOrder(match.params.id, myForm));
+  };
+
+  return (
+    <Fragment>
+      <MetaData title="PROCESS ORDER" />
+      <div className="dashboard">
+        <SideBar />
+        <div className="newProductContainer">
+          {loading ? (
+            <Loader />
+          ) : (
+            <div
+              className="confirmOrderPage"
+              style={{
+                display: order.orderStatus === "Delivered" ? "block" : "grid",
+              }}
+            >
+              <div>
+                <div className="confirmShippingArea">
+                  <Typography>Shipping Info</Typography>
+                  <div className="orderDetailsContainerBox">
+                    <div>
+                      <p>Name:</p>
+                      <span>{order.user && order.user.name}</span>
+                    </div>
+                    <div>
+                      <p>Phone:</p>
+                      <span>
+                        {order.shippingInfo && order.shippingInfo.phoneNo}
+                      </span>
+                    </div>
+                    <div>
+                      <p>Address:</p>
+                      <span>
+                        {order.shippingInfo &&
+                          `${order.shippingInfo.address}, ${order.shippingInfo.city}, ${order.shippingInfo.state}, ${order.shippingInfo.pinCode}, ${order.shippingInfo.country}`}
+                      </span>
+                    </div>
+                  </div>
+
+                  <Typography>Payment</Typography>
+                  <div className="orderDetailsContainerBox">
+                    <div>
+                      <p
+                        className={
+                          order.paymentInfo &&
+                          order.paymentInfo.status === "succeeded"
+                            ? "greenColor"
+                            : "redColor"
+                        }
+                      >
+                        {order.paymentInfo &&
+                        order.paymentInfo.status === "succeeded"
+                          ? "PAID"
+                          : "NOT PAID"}
+                      </p>
+                    </div>
+                    <div>
+                      <p>Amount:</p>
+                      <span>₹{order.totalPrice && order.totalPrice}</span>
+                    </div>
+                  </div>
+
+                  <Typography>Order Status</Typography>
+                  <div className="orderDetailsContainerBox">
+                    <div>
+                      <p
+                        className={
+                          order.orderStatus && order.orderStatus === "Delivered"
+                            ? "greenColor"
+                            : "redColor"
+                        }
+                      >
+                        {order.orderStatus && order.orderStatus}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="confirmCartItems">
+                  <Typography>Your Cart Items:</Typography>
+                  <div className="confirmCartItemscontainer">
+                    {order.orderItems &&
+                      order.orderItems.map((item) => (
+                        <div key={item.product}>
+                          <img src={item.image} alt="Product" />
+                          <Link to={`/product/${item.product}`}>
+                            {item.name}
+                          </Link>{" "}
+                          <span>
+                            {item.quantity} X ₹{item.price} ={" "}
+                            <b>₹{item.price * item.quantity}</b>
+                          </span>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </div>
+              {/* */}
+              <div
+                style={{
+                  display: order.orderStatus === "Delivered" ? "none" : "block",
+                }}
+              >
+                <form
+                  className="updateOrderForm"
+                  onSubmit={processOrderSubmintHandler}
+                >
+                  <h1>Process Order</h1>
+
+                  <div>
+                    <AccountTreeIcon />
+                    <select onChange={(e) => setStatus(e.target.value)}>
+                      <option value="">Choose Status</option>
+                      {order.orderStatus === "Processing" && (
+                        <option value="Shipped">Shipped</option>
+                      )}
+                      {order.orderStatus === "Shipped" && (
+                        <option value="Delivered">Delivered</option>
+                      )}
+                    </select>
+                  </div>
+
+                  <Button
+                    id="createProductBtn"
+                    type="submit"
+                    disabled={
+                      loading ? true : false || status === "" ? true : false
+                    }
+                  >
+                    Process
+                  </Button>
+                </form>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </Fragment>
+  );
+};
+
+export default ProcessOrder;
