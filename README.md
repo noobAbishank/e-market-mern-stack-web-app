@@ -15,12 +15,15 @@ Using **nodemailer** the user get mail while singup and reseting password.
 
 
 ## Link of the Website
-[click here to check the website](https://memories-mern-w-app.netlify.app/)
+[click here to check the website](https://e-market-web-app.herokuapp.com/)
 
 
 ## Screenshots
 
 <img src="./screenshots/Screenshot1.png" width="700px">
+<img src="./screenshots/Screenshot2.png" width="700px">
+<img src="./screenshots/Screenshot3.png" width="700px">
+<img src="./screenshots/Screenshot4.png" width="700px">
 
 
 

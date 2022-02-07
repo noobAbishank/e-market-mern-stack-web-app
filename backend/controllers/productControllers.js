@@ -53,7 +53,7 @@ exports.getAllProducts = catchAsyncErrors(async (req, res, next) => {
   let products = await apiFeature.query;
 
   const priceArray = [];
-  
+
   products.forEach((item) => {
     priceArray.push(item.price);
   });
@@ -178,6 +178,7 @@ exports.createProductReview = catchAsyncErrors(async (req, res, next) => {
 
   const review = {
     user: req.user._id,
+    avatar: req.user.avatar.url,
     name: req.user.name,
     rating: Number(rating),
     comment,

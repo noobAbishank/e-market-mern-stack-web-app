@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import MailOutlineIcon from "@material-ui/icons/MailOutline";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
 import FaceIcon from "@material-ui/icons/Face";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import { useDispatch, useSelector } from "react-redux";
 import { useAlert } from "react-alert";
 
@@ -157,11 +157,11 @@ const LoginSignUp = ({ history, location }) => {
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                   />
-                  <Visibility
+                  <VisibilityIcon
                     id="showLoginPasswordText"
                     onClick={handleShowPassword}
                   />
-                  <VisibilityOff
+                  <VisibilityOffIcon
                     onClick={handleShowPassword}
                     id="hideLoginPasswordText"
                     style={{ display: "none" }}
@@ -207,11 +207,11 @@ const LoginSignUp = ({ history, location }) => {
                     value={password}
                     onChange={registerDataChange}
                   />
-                  <Visibility
+                  <VisibilityIcon
                     id="showSingUpPasswordText"
                     onClick={handleShowPassword}
                   />
-                  <VisibilityOff
+                  <VisibilityOffIcon
                     onClick={handleShowPassword}
                     id="hideSingUpPasswordText"
                     style={{ display: "none" }}
